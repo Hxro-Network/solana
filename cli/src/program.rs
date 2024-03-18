@@ -40,6 +40,7 @@ use {
         account_utils::StateMut,
         bpf_loader, bpf_loader_deprecated,
         bpf_loader_upgradeable::{self, UpgradeableLoaderState},
+        compute_budget::ComputeBudgetInstruction,
         feature_set::FeatureSet,
         instruction::{Instruction, InstructionError},
         loader_instruction,
@@ -81,6 +82,7 @@ pub enum ProgramCliCommand {
         max_len: Option<usize>,
         allow_excessive_balance: bool,
         skip_fee_check: bool,
+        priority_fees: Option<u64>,
     },
     WriteBuffer {
         program_location: String,
@@ -89,21 +91,25 @@ pub enum ProgramCliCommand {
         buffer_authority_signer_index: SignerIndex,
         max_len: Option<usize>,
         skip_fee_check: bool,
+        priority_fees: Option<u64>,
     },
     SetBufferAuthority {
         buffer_pubkey: Pubkey,
         buffer_authority_index: Option<SignerIndex>,
         new_buffer_authority: Pubkey,
+        priority_fees: Option<u64>,
     },
     SetUpgradeAuthority {
         program_pubkey: Pubkey,
         upgrade_authority_index: Option<SignerIndex>,
         new_upgrade_authority: Option<Pubkey>,
+        priority_fees: Option<u64>,
     },
     SetUpgradeAuthorityChecked {
         program_pubkey: Pubkey,
         upgrade_authority_index: SignerIndex,
         new_upgrade_authority_index: SignerIndex,
+        priority_fees: Option<u64>,
     },
     Show {
         account_pubkey: Option<Pubkey>,
@@ -196,6 +202,15 @@ impl ProgramSubCommands for App<'_, '_> {
                                 .long("allow-excessive-deploy-account-balance")
                                 .takes_value(false)
                                 .help("Use the designated program id even if the account already holds a large balance of SOL")
+                        )
+                        .arg(
+                            Arg::with_name("priority_fees")
+                                .long("priority-fees")
+                                .value_name("priority_fees")
+                                .takes_value(true)
+                                .required(false)
+                                .help("Sets priority fees, denominated in microlamports per compute unit \
+                                      [default: 0]")
                         ),
                 )
                 .subcommand(
@@ -233,6 +248,15 @@ impl ProgramSubCommands for App<'_, '_> {
                                 .required(false)
                                 .help("Maximum length of the upgradeable program \
                                       [default: twice the length of the original deployed program]")
+                        )
+                        .arg(
+                            Arg::with_name("priority_fees")
+                                .long("priority-fees")
+                                .value_name("priority_fees")
+                                .takes_value(true)
+                                .required(false)
+                                .help("Sets priority fees, denominated in microlamports per compute unit \
+                                      [default: 0]")
                         ),
                 )
                 .subcommand(
@@ -261,6 +285,15 @@ impl ProgramSubCommands for App<'_, '_> {
                                 .required(true),
                                 "Address of the new buffer authority"),
                         )
+                        .arg(
+                            Arg::with_name("priority_fees")
+                                .long("priority-fees")
+                                .value_name("priority_fees")
+                                .takes_value(true)
+                                .required(false)
+                                .help("Sets priority fees, denominated in microlamports per compute unit \
+                                      [default: 0]")
+                        ),
                 )
                 .subcommand(
                     SubCommand::with_name("set-upgrade-authority")
@@ -302,6 +335,15 @@ impl ProgramSubCommands for App<'_, '_> {
                                 .requires("new_upgrade_authority")
                                 .takes_value(false)
                                 .help("Set this flag if you don't want the new authority to sign the set-upgrade-authority transaction."),
+                        )
+                        .arg(
+                            Arg::with_name("priority_fees")
+                                .long("priority-fees")
+                                .value_name("priority_fees")
+                                .takes_value(true)
+                                .required(false)
+                                .help("Sets priority fees, denominated in microlamports per compute unit \
+                                      [default: 0]")
                         ),
                 )
                 .subcommand(
@@ -475,6 +517,8 @@ pub fn parse_program_subcommand(
             let signer_info =
                 default_signer.generate_unique_signers(bulk_signers, matches, wallet_manager)?;
 
+            let priority_fees = value_of(matches, "priority_fees");
+
             CliCommandInfo {
                 command: CliCommand::Program(ProgramCliCommand::Deploy {
                     program_location,
@@ -489,6 +533,7 @@ pub fn parse_program_subcommand(
                     max_len,
                     allow_excessive_balance: matches.is_present("allow_excessive_balance"),
                     skip_fee_check,
+                    priority_fees,
                 }),
                 signers: signer_info.signers,
             }
@@ -516,6 +561,8 @@ pub fn parse_program_subcommand(
             let signer_info =
                 default_signer.generate_unique_signers(bulk_signers, matches, wallet_manager)?;
 
+            let priority_fees = value_of(matches, "priority_fees");
+
             CliCommandInfo {
                 command: CliCommand::Program(ProgramCliCommand::WriteBuffer {
                     program_location: matches.value_of("program_location").unwrap().to_string(),
@@ -526,6 +573,7 @@ pub fn parse_program_subcommand(
                         .unwrap(),
                     max_len,
                     skip_fee_check,
+                    priority_fees,
                 }),
                 signers: signer_info.signers,
             }
@@ -547,11 +595,14 @@ pub fn parse_program_subcommand(
                 wallet_manager,
             )?;
 
+            let priority_fees = value_of(matches, "priority_fees");
+
             CliCommandInfo {
                 command: CliCommand::Program(ProgramCliCommand::SetBufferAuthority {
                     buffer_pubkey,
                     buffer_authority_index: signer_info.index_of(buffer_authority_pubkey),
                     new_buffer_authority,
+                    priority_fees,
                 }),
                 signers: signer_info.signers,
             }
@@ -581,12 +632,15 @@ pub fn parse_program_subcommand(
             let signer_info =
                 default_signer.generate_unique_signers(signers, matches, wallet_manager)?;
 
+            let priority_fees = value_of(matches, "priority_fees");
+
             if matches.is_present("skip_new_upgrade_authority_signer_check") || is_final {
                 CliCommandInfo {
                     command: CliCommand::Program(ProgramCliCommand::SetUpgradeAuthority {
                         program_pubkey,
                         upgrade_authority_index: signer_info.index_of(upgrade_authority_pubkey),
                         new_upgrade_authority,
+                        priority_fees,
                     }),
                     signers: signer_info.signers,
                 }
@@ -600,6 +654,7 @@ pub fn parse_program_subcommand(
                         new_upgrade_authority_index: signer_info
                             .index_of(new_upgrade_authority)
                             .expect("new upgrade authority is missing from signers"),
+                        priority_fees,
                     }),
                     signers: signer_info.signers,
                 }
@@ -697,6 +752,7 @@ pub fn process_program_subcommand(
             max_len,
             allow_excessive_balance,
             skip_fee_check,
+            priority_fees,
         } => process_program_deploy(
             rpc_client,
             config,
@@ -710,6 +766,7 @@ pub fn process_program_subcommand(
             *max_len,
             *allow_excessive_balance,
             *skip_fee_check,
+            *priority_fees,
         ),
         ProgramCliCommand::WriteBuffer {
             program_location,
@@ -718,6 +775,7 @@ pub fn process_program_subcommand(
             buffer_authority_signer_index,
             max_len,
             skip_fee_check,
+            priority_fees,
         } => process_write_buffer(
             rpc_client,
             config,
@@ -727,11 +785,13 @@ pub fn process_program_subcommand(
             *buffer_authority_signer_index,
             *max_len,
             *skip_fee_check,
+            *priority_fees,
         ),
         ProgramCliCommand::SetBufferAuthority {
             buffer_pubkey,
             buffer_authority_index,
             new_buffer_authority,
+            priority_fees,
         } => process_set_authority(
             &rpc_client,
             config,
@@ -739,11 +799,13 @@ pub fn process_program_subcommand(
             Some(*buffer_pubkey),
             *buffer_authority_index,
             Some(*new_buffer_authority),
+            *priority_fees,
         ),
         ProgramCliCommand::SetUpgradeAuthority {
             program_pubkey,
             upgrade_authority_index,
             new_upgrade_authority,
+            priority_fees,
         } => process_set_authority(
             &rpc_client,
             config,
@@ -751,17 +813,20 @@ pub fn process_program_subcommand(
             None,
             *upgrade_authority_index,
             *new_upgrade_authority,
+            *priority_fees,
         ),
         ProgramCliCommand::SetUpgradeAuthorityChecked {
             program_pubkey,
             upgrade_authority_index,
             new_upgrade_authority_index,
+            priority_fees,
         } => process_set_authority_checked(
             &rpc_client,
             config,
             *program_pubkey,
             *upgrade_authority_index,
             *new_upgrade_authority_index,
+            *priority_fees,
         ),
         ProgramCliCommand::Show {
             account_pubkey,
@@ -838,6 +903,7 @@ fn process_program_deploy(
     max_len: Option<usize>,
     allow_excessive_balance: bool,
     skip_fee_check: bool,
+    priority_fees: Option<u64>,
 ) -> ProcessResult {
     let (words, mnemonic, buffer_keypair) = create_ephemeral_keypair()?;
     let (buffer_provided, buffer_signer, buffer_pubkey) = if let Some(i) = buffer_signer_index {
@@ -1018,6 +1084,7 @@ fn process_program_deploy(
             upgrade_authority_signer,
             allow_excessive_balance,
             skip_fee_check,
+            priority_fees,
         )
     } else {
         do_process_program_upgrade(
@@ -1029,6 +1096,7 @@ fn process_program_deploy(
             &buffer_pubkey,
             buffer_signer,
             skip_fee_check,
+            priority_fees,
         )
     };
     if result.is_ok() && is_final {
@@ -1039,6 +1107,7 @@ fn process_program_deploy(
             None,
             Some(upgrade_authority_signer_index),
             None,
+            priority_fees,
         )?;
     }
     if result.is_err() && buffer_signer_index.is_none() {
@@ -1056,6 +1125,7 @@ fn process_write_buffer(
     buffer_authority_signer_index: SignerIndex,
     max_len: Option<usize>,
     skip_fee_check: bool,
+    priority_fees: Option<u64>,
 ) -> ProcessResult {
     // Create ephemeral keypair to use for Buffer account, if not provided
     let (words, mnemonic, buffer_keypair) = create_ephemeral_keypair()?;
@@ -1118,6 +1188,7 @@ fn process_write_buffer(
         buffer_authority,
         true,
         skip_fee_check,
+        priority_fees,
     );
 
     if result.is_err() && buffer_signer_index.is_none() && buffer_signer.is_some() {
@@ -1133,6 +1204,7 @@ fn process_set_authority(
     buffer_pubkey: Option<Pubkey>,
     authority: Option<SignerIndex>,
     new_authority: Option<Pubkey>,
+    priority_fees: Option<u64>,
 ) -> ProcessResult {
     let authority_signer = if let Some(index) = authority {
         config.signers[index]
@@ -1200,6 +1272,7 @@ fn process_set_authority_checked(
     program_pubkey: Pubkey,
     authority_index: SignerIndex,
     new_authority_index: SignerIndex,
+    priority_fees: Option<u64>,
 ) -> ProcessResult {
     let authority_signer = config.signers[authority_index];
     let new_authority_signer = config.signers[new_authority_index];
@@ -1748,6 +1821,7 @@ fn do_process_program_write_and_deploy(
     buffer_authority_signer: &dyn Signer,
     allow_excessive_balance: bool,
     skip_fee_check: bool,
+    priority_fees: Option<u64>,
 ) -> ProcessResult {
     let blockhash = rpc_client.get_latest_blockhash()?;
 
@@ -1815,7 +1889,18 @@ fn do_process_program_write_and_deploy(
         } else {
             loader_instruction::write(buffer_pubkey, loader_id, offset, bytes)
         };
-        Message::new_with_blockhash(&[instruction], Some(&payer_pubkey), &blockhash)
+        Message::new_with_blockhash(
+            &(if let Some(mlpcu) = priority_fees {
+                vec![
+                    ComputeBudgetInstruction::set_compute_unit_price(mlpcu),
+                    instruction,
+                ]
+            } else {
+                vec![instruction]
+            })[..],
+            Some(&payer_pubkey),
+            &blockhash,
+        )
     };
 
     let mut write_messages = vec![];
@@ -1897,6 +1982,7 @@ fn do_process_program_upgrade(
     buffer_pubkey: &Pubkey,
     buffer_signer: Option<&dyn Signer>,
     skip_fee_check: bool,
+    priority_fees: Option<u64>,
 ) -> ProcessResult {
     let loader_id = bpf_loader_upgradeable::id();
     let data_len = program_data.len();
@@ -2319,6 +2405,7 @@ mod tests {
                     max_len: None,
                     allow_excessive_balance: false,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2346,6 +2433,7 @@ mod tests {
                     max_len: Some(42),
                     allow_excessive_balance: false,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2375,6 +2463,7 @@ mod tests {
                     max_len: None,
                     allow_excessive_balance: false,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2406,6 +2495,7 @@ mod tests {
                     max_len: None,
                     allow_excessive_balance: false,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2436,6 +2526,7 @@ mod tests {
                     max_len: None,
                     allow_excessive_balance: false,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2469,6 +2560,7 @@ mod tests {
                     max_len: None,
                     allow_excessive_balance: false,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2497,6 +2589,7 @@ mod tests {
                     is_final: true,
                     max_len: None,
                     skip_fee_check: false,
+                    priority_fees: None,
                     allow_excessive_balance: false,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
@@ -2531,6 +2624,7 @@ mod tests {
                     buffer_authority_signer_index: 0,
                     max_len: None,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2555,6 +2649,7 @@ mod tests {
                     buffer_authority_signer_index: 0,
                     max_len: Some(42),
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2582,6 +2677,7 @@ mod tests {
                     buffer_authority_signer_index: 0,
                     max_len: None,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2612,6 +2708,7 @@ mod tests {
                     buffer_authority_signer_index: 1,
                     max_len: None,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2647,6 +2744,7 @@ mod tests {
                     buffer_authority_signer_index: 2,
                     max_len: None,
                     skip_fee_check: false,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2685,6 +2783,7 @@ mod tests {
                     program_pubkey,
                     upgrade_authority_index: Some(0),
                     new_upgrade_authority: Some(new_authority_pubkey),
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2710,6 +2809,7 @@ mod tests {
                     program_pubkey,
                     upgrade_authority_index: Some(0),
                     new_upgrade_authority: Some(new_authority_pubkey.pubkey()),
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2734,6 +2834,7 @@ mod tests {
                     program_pubkey,
                     upgrade_authority_index: 0,
                     new_upgrade_authority_index: 1,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2762,6 +2863,7 @@ mod tests {
                     program_pubkey,
                     upgrade_authority_index: Some(0),
                     new_upgrade_authority: None,
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2787,6 +2889,7 @@ mod tests {
                     program_pubkey,
                     upgrade_authority_index: Some(1),
                     new_upgrade_authority: None,
+                    priority_fees: None,
                 }),
                 signers: vec![
                     read_keypair_file(&keypair_file).unwrap().into(),
@@ -2823,6 +2926,7 @@ mod tests {
                     buffer_pubkey,
                     buffer_authority_index: Some(0),
                     new_buffer_authority: new_authority_pubkey,
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -2847,6 +2951,7 @@ mod tests {
                     buffer_pubkey,
                     buffer_authority_index: Some(0),
                     new_buffer_authority: new_authority_keypair.pubkey(),
+                    priority_fees: None,
                 }),
                 signers: vec![read_keypair_file(&keypair_file).unwrap().into()],
             }
@@ -3148,6 +3253,7 @@ mod tests {
                 max_len: None,
                 allow_excessive_balance: false,
                 skip_fee_check: false,
+                priority_fees: None,
             }),
             signers: vec![&default_keypair],
             output_format: OutputFormat::JsonCompact,
