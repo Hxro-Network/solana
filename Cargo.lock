@@ -710,7 +710,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4114279215a005bc675e386011e594e1d9b800918cea18fcadadcce864a2046b"
 dependencies = [
  "borsh-derive 0.10.3",
- "hashbrown 0.12.3",
+ "hashbrown 0.13.2",
 ]
 
 [[package]]
@@ -4222,6 +4222,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "rand_chacha"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e6af7f3e25ded52c41df4e0b1af2d047e45896c2f3281792ed68a1c243daedb"
+dependencies = [
+ "ppv-lite86",
+ "rand_core 0.10.1",
+]
+
+[[package]]
 name = "rand_core"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4253,6 +4263,12 @@ checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
  "getrandom 0.2.10",
 ]
+
+[[package]]
+name = "rand_core"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
 
 [[package]]
 name = "rand_hc"
@@ -5202,7 +5218,7 @@ dependencies = [
  "percentage",
  "qualifier_attr",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "rayon",
  "regex",
  "rustc_version 0.4.0",
@@ -5716,7 +5732,7 @@ dependencies = [
  "indicatif",
  "log",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "rayon",
  "rcgen",
  "solana-logger",
@@ -5753,7 +5769,7 @@ dependencies = [
  "num_enum 0.6.1",
  "quinn",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "raptorq",
  "rayon",
  "rcgen",
@@ -6061,7 +6077,7 @@ dependencies = [
  "num-traits",
  "num_cpus",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "rayon",
  "rustc_version 0.4.0",
  "rustversion",
@@ -6171,7 +6187,7 @@ dependencies = [
  "num_enum 0.6.1",
  "prost",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "rayon",
  "reed-solomon-erasure",
  "rocksdb",
@@ -6444,7 +6460,7 @@ dependencies = [
  "log",
  "nix 0.26.4",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "rayon",
  "rustc_version 0.4.0",
  "serde",
@@ -6879,7 +6895,7 @@ dependencies = [
  "percentage",
  "qualifier_attr",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "rayon",
  "regex",
  "rustc_version 0.4.0",
@@ -7315,7 +7331,7 @@ dependencies = [
  "lru",
  "quinn",
  "rand 0.8.5",
- "rand_chacha 0.3.1",
+ "rand_chacha 0.10.0",
  "rayon",
  "rcgen",
  "rustls",
