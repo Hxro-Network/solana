@@ -574,6 +574,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "bincode"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd6a120d2e16b3e1b4a24bd70f23b12d3e16b81f113364a26935f8db7245452d"
+
+[[package]]
 name = "bindgen"
 version = "0.65.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -710,7 +716,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4114279215a005bc675e386011e594e1d9b800918cea18fcadadcce864a2046b"
 dependencies = [
  "borsh-derive 0.10.3",
- "hashbrown 0.12.3",
+ "hashbrown 0.13.2",
 ]
 
 [[package]]
@@ -5104,7 +5110,7 @@ dependencies = [
  "Inflector",
  "assert_matches",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "bs58",
  "bv",
  "lazy_static",
@@ -5172,7 +5178,7 @@ version = "1.17.27"
 dependencies = [
  "arrayref",
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "blake3",
  "bv",
  "bytemuck",
@@ -5234,7 +5240,7 @@ dependencies = [
 name = "solana-address-lookup-table-program"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "bytemuck",
  "log",
  "num-derive 0.3.3",
@@ -5254,7 +5260,7 @@ name = "solana-address-lookup-table-program-tests"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "solana-address-lookup-table-program",
  "solana-program-test",
  "solana-sdk",
@@ -5314,7 +5320,7 @@ dependencies = [
 name = "solana-banks-server"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "crossbeam-channel",
  "futures 0.3.28",
  "solana-accounts-db",
@@ -5402,7 +5408,7 @@ name = "solana-bpf-loader-program"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "byteorder",
  "libsecp256k1",
  "log",
@@ -5423,7 +5429,7 @@ name = "solana-bpf-loader-program-tests"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "solana-bpf-loader-program",
  "solana-program-test",
  "solana-sdk",
@@ -5532,7 +5538,7 @@ name = "solana-cli"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "bs58",
  "clap 2.33.3",
  "console",
@@ -5626,7 +5632,7 @@ name = "solana-client"
 version = "1.17.27"
 dependencies = [
  "async-trait",
- "bincode",
+ "bincode 3.0.0",
  "crossbeam-channel",
  "dashmap 4.0.2",
  "futures 0.3.28",
@@ -5695,7 +5701,7 @@ dependencies = [
 name = "solana-config-program"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "chrono",
  "serde",
  "serde_derive",
@@ -5709,7 +5715,7 @@ name = "solana-connection-cache"
 version = "1.17.27"
 dependencies = [
  "async-trait",
- "bincode",
+ "bincode 3.0.0",
  "crossbeam-channel",
  "futures-util",
  "indexmap 2.0.2",
@@ -5734,7 +5740,7 @@ version = "1.17.27"
 dependencies = [
  "assert_matches",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "bs58",
  "bytes",
  "chrono",
@@ -5840,7 +5846,7 @@ dependencies = [
 name = "solana-dos"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "clap 3.2.23",
  "crossbeam-channel",
  "itertools",
@@ -5894,7 +5900,7 @@ name = "solana-entry"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "crossbeam-channel",
  "dlopen2",
  "lazy_static",
@@ -5915,7 +5921,7 @@ dependencies = [
 name = "solana-faucet"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "byteorder",
  "clap 2.33.3",
  "crossbeam-channel",
@@ -5978,7 +5984,7 @@ name = "solana-genesis"
 version = "1.17.27"
 dependencies = [
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "clap 2.33.3",
  "itertools",
  "serde",
@@ -6049,7 +6055,7 @@ name = "solana-gossip"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "bv",
  "clap 2.33.3",
  "crossbeam-channel",
@@ -6100,7 +6106,7 @@ name = "solana-install"
 version = "1.17.27"
 dependencies = [
  "atty",
- "bincode",
+ "bincode 3.0.0",
  "bzip2",
  "chrono",
  "clap 2.33.3",
@@ -6152,7 +6158,7 @@ name = "solana-ledger"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "bitflags 2.3.3",
  "bs58",
  "byteorder",
@@ -6268,7 +6274,7 @@ dependencies = [
 name = "solana-loader-v4-program"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "log",
  "solana-measure",
  "solana-program-runtime",
@@ -6401,7 +6407,7 @@ dependencies = [
 name = "solana-net-utils"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "clap 3.2.23",
  "crossbeam-channel",
  "log",
@@ -6433,7 +6439,7 @@ version = "1.17.27"
 dependencies = [
  "ahash 0.8.5",
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "bv",
  "caps",
  "curve25519-dalek",
@@ -6463,7 +6469,7 @@ name = "solana-poh"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "core_affinity",
  "crossbeam-channel",
  "log",
@@ -6506,7 +6512,7 @@ dependencies = [
  "array-bytes",
  "assert_matches",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "bitflags 2.3.3",
  "blake3",
  "borsh 0.10.3",
@@ -6557,7 +6563,7 @@ version = "1.17.27"
 dependencies = [
  "assert_matches",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "eager",
  "enum-iterator",
  "itertools",
@@ -6587,7 +6593,7 @@ dependencies = [
  "assert_matches",
  "async-trait",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "chrono-humanize",
  "crossbeam-channel",
  "log",
@@ -6693,7 +6699,7 @@ name = "solana-rpc"
 version = "1.17.27"
 dependencies = [
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "bs58",
  "crossbeam-channel",
  "dashmap 4.0.2",
@@ -6754,7 +6760,7 @@ dependencies = [
  "assert_matches",
  "async-trait",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "bs58",
  "crossbeam-channel",
  "futures 0.3.28",
@@ -6817,7 +6823,7 @@ dependencies = [
 name = "solana-rpc-test"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "bs58",
  "crossbeam-channel",
  "futures-util",
@@ -6847,7 +6853,7 @@ dependencies = [
  "arrayref",
  "assert_matches",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "blake3",
  "bv",
  "bytemuck",
@@ -6930,7 +6936,7 @@ dependencies = [
  "anyhow",
  "assert_matches",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "bitflags 2.3.3",
  "borsh 0.10.3",
  "bs58",
@@ -7034,7 +7040,7 @@ name = "solana-stake-program"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "log",
  "proptest",
  "rustc_version 0.4.0",
@@ -7051,7 +7057,7 @@ name = "solana-storage-bigtable"
 version = "1.17.27"
 dependencies = [
  "backoff",
- "bincode",
+ "bincode 3.0.0",
  "bytes",
  "bzip2",
  "enum-iterator",
@@ -7082,7 +7088,7 @@ dependencies = [
 name = "solana-storage-proto"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "bs58",
  "enum-iterator",
  "prost",
@@ -7143,7 +7149,7 @@ name = "solana-system-program"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "log",
  "serde",
  "serde_derive",
@@ -7157,7 +7163,7 @@ name = "solana-test-validator"
 version = "1.17.27"
 dependencies = [
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "crossbeam-channel",
  "log",
  "serde_derive",
@@ -7186,7 +7192,7 @@ dependencies = [
 name = "solana-thin-client"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "log",
  "rayon",
  "solana-connection-cache",
@@ -7201,7 +7207,7 @@ name = "solana-tokens"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "chrono",
  "clap 2.33.3",
  "console",
@@ -7234,7 +7240,7 @@ name = "solana-tpu-client"
 version = "1.17.27"
 dependencies = [
  "async-trait",
- "bincode",
+ "bincode 3.0.0",
  "futures-util",
  "indexmap 2.0.2",
  "indicatif",
@@ -7255,7 +7261,7 @@ dependencies = [
 name = "solana-transaction-dos"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "clap 2.33.3",
  "log",
  "rand 0.8.5",
@@ -7284,7 +7290,7 @@ version = "1.17.27"
 dependencies = [
  "Inflector",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "borsh 0.10.3",
  "bs58",
  "lazy_static",
@@ -7306,7 +7312,7 @@ name = "solana-turbine"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "bytes",
  "crossbeam-channel",
  "futures 0.3.28",
@@ -7441,7 +7447,7 @@ dependencies = [
 name = "solana-vote"
 version = "1.17.27"
 dependencies = [
- "bincode",
+ "bincode 3.0.0",
  "crossbeam-channel",
  "itertools",
  "log",
@@ -7461,7 +7467,7 @@ name = "solana-vote-program"
 version = "1.17.27"
 dependencies = [
  "assert_matches",
- "bincode",
+ "bincode 3.0.0",
  "log",
  "num-derive 0.3.3",
  "num-traits",
@@ -7549,7 +7555,7 @@ version = "1.17.27"
 dependencies = [
  "aes-gcm-siv",
  "base64 0.21.4",
- "bincode",
+ "bincode 3.0.0",
  "bytemuck",
  "byteorder",
  "curve25519-dalek",
@@ -8298,7 +8304,7 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "911a61637386b789af998ee23f50aa30d5fd7edcec8d6d3dedae5e5815205466"
 dependencies = [
- "bincode",
+ "bincode 1.3.3",
  "bytes",
  "educe",
  "futures-core",
