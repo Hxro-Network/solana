@@ -1513,17 +1513,6 @@ dependencies = [
 
 [[package]]
 name = "dashmap"
-version = "4.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e77a43b28d0668df09411cb0bc9a8c2adc40f9a048afe863e05fd43251e8e39c"
-dependencies = [
- "cfg-if 1.0.0",
- "num_cpus",
- "rayon",
-]
-
-[[package]]
-name = "dashmap"
 version = "5.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "978747c1d849a7d2ee5e8adc0159961c48fb7e5db2f06af6723b80123bb53856"
@@ -1533,6 +1522,7 @@ dependencies = [
  "lock_api",
  "once_cell",
  "parking_lot_core 0.9.8",
+ "rayon",
 ]
 
 [[package]]
@@ -4854,7 +4844,7 @@ version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e56dd856803e253c8f298af3f4d7eb0ae5e23a737252cd90bb4f3b435033b2d"
 dependencies = [
- "dashmap 5.5.3",
+ "dashmap",
  "futures 0.3.28",
  "lazy_static",
  "log",
@@ -5179,7 +5169,7 @@ dependencies = [
  "byteorder",
  "bzip2",
  "crossbeam-channel",
- "dashmap 4.0.2",
+ "dashmap",
  "ed25519-dalek",
  "flate2",
  "fnv",
@@ -5628,7 +5618,7 @@ dependencies = [
  "async-trait",
  "bincode",
  "crossbeam-channel",
- "dashmap 4.0.2",
+ "dashmap",
  "futures 0.3.28",
  "futures-util",
  "indexmap 2.0.2",
@@ -5739,7 +5729,7 @@ dependencies = [
  "bytes",
  "chrono",
  "crossbeam-channel",
- "dashmap 4.0.2",
+ "dashmap",
  "eager",
  "etcd-client",
  "fs_extra",
@@ -6159,7 +6149,7 @@ dependencies = [
  "chrono",
  "chrono-humanize",
  "crossbeam-channel",
- "dashmap 4.0.2",
+ "dashmap",
  "fs_extra",
  "futures 0.3.28",
  "itertools",
@@ -6226,7 +6216,7 @@ dependencies = [
  "clap 2.33.3",
  "crossbeam-channel",
  "csv",
- "dashmap 4.0.2",
+ "dashmap",
  "futures 0.3.28",
  "histogram",
  "itertools",
@@ -6696,7 +6686,7 @@ dependencies = [
  "bincode",
  "bs58",
  "crossbeam-channel",
- "dashmap 4.0.2",
+ "dashmap",
  "itertools",
  "jsonrpc-core",
  "jsonrpc-core-client",
@@ -6854,7 +6844,7 @@ dependencies = [
  "byteorder",
  "bzip2",
  "crossbeam-channel",
- "dashmap 4.0.2",
+ "dashmap",
  "dir-diff",
  "ed25519-dalek",
  "flate2",
